@@ -100,7 +100,7 @@ function throwbackCommand(arguments, receivedMessage){
     }
 
 
-    if (arguments.length > 2 ) {
+    if (arguments.length > 10 ) {
         receivedMessage.channel.send("Just use `!throwback me`")
     } else if (arguments == "outdatedme") {
         receivedMessage.channel.fetchMessages({ limit: 100 }).then(message => {
@@ -118,6 +118,27 @@ function throwbackCommand(arguments, receivedMessage){
         
         
 
+    } else if (arguments == "me2") {
+        var x = 0;
+        var toBeArray;
+        
+
+        while (x < 5) {
+            var i;
+            receivedMessage.channel.fetchMessages({ limit: 100, before: i }).then(msg => {
+                toBeArray = msg;
+                i = toBeArray.last().id;
+                messageLoop(i);
+
+            })
+
+            x++;
+            console.log(toBeArray);
+        } 
+
+        function messageLoop(data){
+            console.log(data)
+        }
     } else {
         
 
