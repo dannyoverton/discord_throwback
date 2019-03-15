@@ -130,10 +130,12 @@ function throwbackCommand(arguments, receivedMessage){
         let rContent = rMessage.content;
         let rChannel = rMessage.channel.name;
         let rMessageTime = new Date(rMessage.createdTimestamp).toDateString()
+        let currentTime = new Date.now()
         
+        console.log(currentTime)
         console.log(rContent)
         console.log(rMessage)
-
+        
         console.log(sum_messages.length)
         console.log(rArray.length)
         
@@ -149,7 +151,7 @@ function throwbackCommand(arguments, receivedMessage){
             
             //title: rUser + " sent this: " + rMessageTime + " in (" + rChannel + ")",
             //description: rContent,
-            timestamp: new Date().toDateString(),
+            timestamp: Date.now().toDateString(),
             footer: {
               icon_url: client.user.avatarURL,
               text: "This throwback was requested by " + receivedMessage.author.username + " at "
