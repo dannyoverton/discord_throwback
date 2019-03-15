@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const client = new Discord.Client()
+const moment = require('moment')// Using moment.js to get current time for timestamp
 
 
 // Enviornment variables using dotenv
@@ -32,8 +33,8 @@ function processCommand(receivedMessage) {
 
     if (primaryCommand == "clean") {
         cleanCommand(arguments, receivedMessage)
-    } else if (primaryCommand == "multiply") {
-        multiplyCommand(arguments, receivedMessage)
+    } else if (primaryCommand == "help") {
+        helpCommand(arguments, receivedMessage)
     } else if (primaryCommand == "throwback") {
         throwbackCommand(arguments, receivedMessage)
     } else {
@@ -41,6 +42,18 @@ function processCommand(receivedMessage) {
     }
 }
 
+
+
+function helpCommand(arguments, receivedMessage) {
+    if (arguments != "help") {
+        receivedMessage.channel.send(`The commands are !throwback
+        !throwback me
+        !throwback vid
+        *If you need info about what any of them do or how the bot works use !throwback help `)
+    } else {
+        receivedMessage.channel.send("I'm not sure what you need help with. Try `!help [topic]`")
+    }
+}
 
 
 
@@ -52,9 +65,11 @@ function cleanCommand(arguments, receivedMessage) {
           let mine = collected.filter(m => m.content.startsWith("!")); // this gets only your messages
           if (mine.size > 0) {
             await receivedMessage.channel.bulkDelete(mine, true);
-            clean(receivedMessage.channel);
-          } else receivedMessage.channel.send("The channel is now empty!").delete(5000); // this message is deleted after 5 s
-        });
+            receivedMessage.channel.send("All `!command` messages deleted").then(msg => msg.delete(5000));
+            //clean(receivedMessage.channel);
+          } else receivedMessage.channel.send("The channel is now empty!").then(msg => msg.delete(5000)); // this message is deleted after 5 s
+        })
+        .catch((err) => console.log(err));
       }
 
     function cleanBot(limit = 100) {
@@ -62,44 +77,45 @@ function cleanCommand(arguments, receivedMessage) {
             let mine = collected.filter(m => m.author.id == "554916310212149251"); // this gets only your messages
             if (mine.size > 0) {
                 await receivedMessage.channel.bulkDelete(mine, true);
-                clean(receivedMessage.channel);
-            } else receivedMessage.channel.send("The channel is now empty!").delete(5000); // this message is deleted after 5 s
-        });
-      }   
+                //clean(receivedMessage.channel);
+            } else receivedMessage.channel.send("The channel is now empty of my posts!").then(msg => msg.delete(5000)); // this message is deleted after 5 s
+        })
+        .catch((err) => console.log(err));
+      }
+    
+    function cleanAll(limit = 100) {
+        return receivedMessage.channel.fetchMessages({limit}).then(async collected => {
+            let mine = collected;
+            if (mine.size > 0) {
+                await receivedMessage.channel.bulkDelete(mine, true);
+                //clean(receivedMessage.channel);
+            } else receivedMessage.channel.send("The channel is now empty!").then(msg => msg.delete(5000)); // this message is deleted after 5 s
+        })
+        .catch((err) => console.log(err));
+      }
 
 
     if (arguments == "bot") {
         cleanBot();
-    } else {
+    } else if (arguments == "all") {
+        cleanAll();
+    } else if (arguments == "") {
         clean();
+    } else {
+        receivedMessage.channel.send("Try a command, bitch.")
     }
 }
 
 
 
 
-
-
-
-
-var bigArray;
-var testArray;
-
 function throwbackCommand(arguments, receivedMessage){
     var id = receivedMessage.member.id; // Code for getting ID of person who activates
-    var user = receivedMessage.guild.members.random(); //Code for getting random user from server
-    var userId = (`${user.user}`);
-    var otherUserId = user.user.id
     var throwbackChannel = client.channels.get("555605025917894657")
-    
     
     if (receivedMessage.author.id === id) {
         receivedMessage.delete(10000)
     }
-
-
-    // console.log(otherUserId)
-    // console.log(userId);
     
     
     async function lots_of_messages_getter(limit = 1000) {
@@ -114,7 +130,7 @@ function throwbackCommand(arguments, receivedMessage){
             }
     
             const messages = await receivedMessage.channel.fetchMessages(options);
-            sum_messages.push(messages.array());
+            sum_messages.push(...messages.array());
             last_id = messages.last().id;
     
             if (messages.size != 100 || sum_messages >= limit) {
@@ -122,182 +138,200 @@ function throwbackCommand(arguments, receivedMessage){
             }
         }
         
-        //sum_messages.filter(msg => msg.author.id === id);
-        let rArray = sum_messages[Math.floor(Math.random() * sum_messages.length)]
-        //let big_array_user = big_array.filter(msg => msg.author.id === id)
-        let rMessage = rArray[Math.floor(Math.random() * rArray.length)]
-        let rUser = rMessage.author.username;
-        let rContent = rMessage.content;
-        let rChannel = rMessage.channel.name;
-        let rMessageTime = new Date(rMessage.createdTimestamp).toDateString()
+       
         
-        console.log(rContent)
-        console.log(rMessage)
-
-        console.log(sum_messages.length)
-        console.log(rArray.length)
-        
-
-        throwbackChannel.send({embed: {
-            color: 3447003,
-            author: {
-                name: "Throwback of " + rUser,
-                icon_url: rMessage.author.avatarURL
-            },
-            
-            title: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
-            
-            //title: rUser + " sent this: " + rMessageTime + " in (" + rChannel + ")",
-            //description: rContent,
-            timestamp: new Date().toDateString(),
-            footer: {
-              icon_url: client.user.avatarURL,
-              text: "This throwback was requested by " + receivedMessage.author.username + " at "
-            }
-          }
-        });
-        throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------")
-        throwbackChannel.send(rContent)
         return sum_messages;
     }
 
-    
 
 
-
-
-    async function messagesBigList() {
-        
-
-        receivedMessage.channel.fetchMessages({ limit: 100 }).then(msg => {
-            let toBeArray = msg;
-            let firstLastPost = (toBeArray.last().id)
-            receivedMessage.channel.fetchMessages({ limit: 100, before: firstLastPost }).then(msg => {
-                let secondToBeArray = msg;
-                let secondLastPost = secondToBeArray.last().id;
-                receivedMessage.channel.fetchMessages({ limit: 100, before: secondLastPost }).then(msg => {
-                    let thirdArray = msg;
-                    let thirdLastPost = thirdArray.last().id;
-                    receivedMessage.channel.fetchMessages({ limit: 100, before: thirdLastPost }).then(msg => {
-                        let fourthArray = msg;
-                        fetchedPerson = msg.filter(message => message.author.id === id).array()
-                        randMessage = fetchedPerson[Math.floor(Math.random() * fetchedPerson.length)]
-                        randMessageContent = randMessage.content;
-                        randMessageTime = new Date(randMessage.createdTimestamp).toDateString()
-                        console.log(randMessageContent)
-                        console.log(randMessageTime)
-                        console.log(randMessage.author.username)
-
-
-                        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response")
-                        throwbackChannel.send(randMessage.author.username + " sent this message on: " + randMessageTime + "\n" + randMessageContent)
-                    })
-
-                })
-
-
-            })
-
-
-
-        }).catch((err) => receivedMessage.channel.send(user.user.username + " is a bitch and didn't send any messages recently, sorry!"))
-
-        //receivedMessage.channel.fetchMessages({limit: 100, before: firstArray.last().message.id }) 
-        //console.log(secondArray.last().message.id)
-
-    }
-
-
-    
-
-    function getBigArray() {
-        console.log(bigArray.filter(message => message.author.id === id).array())
-        
-    }
-
-
-
-
-    if (arguments.length > 10 ) {
-        receivedMessage.channel.send("Just use `!throwback me`")
-    } else if (arguments == "outdatedme") {
-        receivedMessage.channel.fetchMessages({ limit: 100 }).then(message => {
-            const fetched = message.filter(msg => msg.author.id === id)
-            fetchedArray = fetched.array();
-            randomMessage = fetchedArray[Math.floor(Math.random() * fetchedArray.length)]
-            const finalMessageContent = (randomMessage.content)
-            const finalMessageTime = new Date(randomMessage.createdTimestamp).toDateString()
-
-            receivedMessage.channel.send(receivedMessage.member.user.username + " sent this message on: " + finalMessageTime + "\n" + finalMessageContent)
-    })
+    if (arguments == "help" ) {
+        receivedMessage.channel.send({
+            embed: {
+                color: 3447003,
+                author: {
+                    name: "How to use the Throwback bot:",
+                    icon_url: client.user.avatarURL, 
+                },
+                fields: [{
+                    name: "How to use:",
+                    value: (`1) Go to the channel that you want to get a post from and type !throwback
+                    2) Wait a little bit (the more posts on the channel the longer it takes)
+                    3) Go to the "Throwback" channel where the throwback message was posted`.trim())
+                },
+                {
+                    name: "Command List",
+                    value: (`**__!throwback__** - Retrieves a completely random message from channel
+                    **__!throwback me__** - Retrieves one of your messages from the channel
+                    **__!throwback vid__** - Gets a random posted video from the channel`)
+                }
+                
+            ]
+            }
+        });
 
     } else if (arguments == "me") {
-        messagesBigList();
-        //getBigArray();
-        
-        
+        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response").then(msg => msg.delete(10000))
+        lots_of_messages_getter().then(msgs => {
+            sum_messages = msgs;
+            sum_messages = sum_messages.filter(msg => msg.author.id === id);
+            let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
+            let rUser = rMessage.author.username;
+            let rContent = rMessage.content;
+            let rEmbed = (rMessage.attachments.length >= 0 ) ? rMessage.attachments.first().url : false
+            let rChannel = rMessage.channel.name;
+            let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
 
+            // Formatting for throwback starts here
+            throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------\n"
+                + rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+
+            // Start of Embed
+            throwbackChannel.send({
+                embed: {
+                    color: 3447003,
+                    author: {
+                        name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+                        icon_url: rMessage.author.avatarURL
+                    },
+
+                    //title: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+
+                    //title: rUser + " sent this: " + rMessageTime + " in (" + rChannel + ")",
+                    //description: rContent,
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                    }
+                }
+            });
+
+
+        }).catch(err => (console.log(err)))
+                   
+
+    } else if (arguments == "vid") {
+        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response").then(msg => msg.delete(10000))
+        lots_of_messages_getter().then(msgs => {
+            sum_messages = msgs;
+            sum_messages = sum_messages.filter(msg => msg.content.startsWith('https://www.youtube.com/watch'));
+            let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
+            let rUser = rMessage.author.username;
+            let rContent = rMessage.content;
+            let rEmbed = (rMessage.attachments.length >= 0 ) ? rMessage.attachments.first().url : false
+            let rChannel = rMessage.channel.name;
+            let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
+
+            // Formatting for throwback starts here
+            throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------\n"
+                + rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+
+            // Start of Embed
+            throwbackChannel.send({
+                embed: {
+                    color: 3447003,
+                    author: {
+                        name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+                        icon_url: rMessage.author.avatarURL
+                    },
+
+                    //title: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+
+                    //title: rUser + " sent this: " + rMessageTime + " in (" + rChannel + ")",
+                    //description: rContent,
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                    }
+                }
+            });
+
+
+        }).catch(err => (console.log(err)))
+        
+        
     } else if (arguments == "test") {
-        console.log(sum_messages)
+        client.channels.get("164580034269413376").fetchMessage("555201664471007243").then(msg => {
+            embed = (msg.attachments.first().url)
+            receivedMessage.channel.send(embed >= 0 ? embed : msg.content)
+        })
+
+    }else if (arguments == "") {
+        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response").then(msg => msg.delete(10000))
+        lots_of_messages_getter().then(msgs => {
+            sum_messages = msgs;
+            let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
+            let rUser = rMessage.author.username;
+            let rContent = rMessage.content;
+            let rEmbed = (rMessage.attachments.length >= 0 ) ? rMessage.attachments.first().url : false //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator
+            let rChannel = rMessage.channel.name;
+            let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
+            
+
+            // Formatting for throwback starts here
+            throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------\n"
+                + rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+            // Start of Embed
+            throwbackChannel.send({
+                embed: {
+                    color: 3447003,
+                    author: {
+                        name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+                        icon_url: rMessage.author.avatarURL
+                    },
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                    }
+                }
+            });
+
+
+        }).catch(err => (console.log(err)))
         
 
-
-    } else if (arguments == "random") {
-        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response")
-        lots_of_messages_getter();
+    
+        
         
 
         
     } else {
-        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response").then(msg => msg.delete(10000))
-        lots_of_messages_getter();
         
-
+        receivedMessage.channel.send({
+            embed: {
+                color: 3447003,
+                author: {
+                    name: "Throwback Boot",
+                    icon_url: client.user.avatarURL, 
+                },
+                fields: [{
+                    name: `The commands are:`,
+                    value: (` 
+                    !throwback
+                    !throwback me
+                    !throwback vid
+                    *For more info use !throwback help`).trim()
+                }],
+            }
+        });
     }
 
 
-
-
 }    
-    //.then(messages => fetchedMsgs = (`${messages.last().content}`)) // Solved using https://stackoverflow.com/questions/54856916/log-all-messages-from-a-channel/54858351#54858351
+
+// ----------REFRENCES----------
+//.then(messages => fetchedMsgs = (`${messages.last().content}`)) // Solved using https://stackoverflow.com/questions/54856916/log-all-messages-from-a-channel/54858351#54858351
     
-    
+//* THIS IS CODE TO USE .get METHOD. THIS IS DOABLE BECAUSE .fetchMessages RETURNS A COLLECTION WHICH IS COMPARABLE TO A MAP *//
+// const getContent = receivedMessage.channel.fetchMessages({limit: 5}).then(messages => console.log(messages.get(content)))
+// return getContent
 
-    //* THIS IS CODE TO USE .get METHOD. THIS IS DOABLE BECAUSE .fetchMessages RETURNS A COLLECTION WHICH IS COMPARABLE TO A MAP *//
-    // const getContent = receivedMessage.channel.fetchMessages({limit: 5}).then(messages => console.log(messages.get(content)))
-    // return getContent
-
-
-
-
-
-    // const collector = new Discord.MessageCollector(receivedMessage, m => m.author.id === userId)
-    // console.log(collector)
-    
-    // ranUserMsgs = receivedMessage.channel.fetchMessages({ limit: 50 });
-    // console.log(ranUserMsgs)
-
-
-
-
-
-
-//     async function findMessage() {
-//         let ranUserMsgs = await receivedMessage.channel.fetchMessages({ limit: 50 });
-//         let ranMsg = await ranUserMsgs.content;
-//         console.log(ranMsg)
-//     }
-// findMessage();
-    
-
-
-
-   
-    // console.log(id)
-    // receivedMessage.channel.fetchMessages({around: id, limit: 1}).then(messages => {
-    //     const fetchedMsg = messages.first();
-    //     console.log(fetchedMsg)
-    //})
 
 
 
