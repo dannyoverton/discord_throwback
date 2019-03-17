@@ -163,7 +163,8 @@ function throwbackCommand(arguments, receivedMessage){
                     name: "Command List",
                     value: (`**__!throwback__** - Retrieves a completely random message from channel
                     **__!throwback me__** - Retrieves one of your messages from the channel
-                    **__!throwback vid__** - Gets a random posted video from the channel`)
+                    **__!throwback vid__** - Gets a random posted video from the channel
+                    **__!throwback convo__** - Gets a group of posts from the channel`)
                 }
                 
             ]
@@ -254,11 +255,63 @@ function throwbackCommand(arguments, receivedMessage){
         }).catch(err => (console.log(err)))
         
         
-    } else if (arguments == "test") {
-        client.channels.get("164580034269413376").fetchMessage("555201664471007243").then(msg => {
-            embed = (msg.attachments.first().url)
-            receivedMessage.channel.send(embed >= 0 ? embed : msg.content)
-        })
+    } else if (arguments == "convo") {
+        receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response").then(msg => msg.delete(10000))
+        lots_of_messages_getter().then(msgs => {
+            sum_messages = msgs;
+            let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
+            let rUser = rMessage.author.username;
+            let rContent = rMessage.content;
+            let rEmbed = (rMessage.attachments.length >= 0 ) ? rMessage.attachments.first().url : false //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator
+            let rChannel = rMessage.channel.name;
+            let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
+            let rIndex = sum_messages.indexOf(rMessage)
+            let rConvo = sum_messages.slice(rIndex - 3, rIndex + 3)
+            console.log(rIndex)
+            console.log(rConvo.length)
+            for (let i = rConvo.length - 1; i >= 0; i--) { //https://stackoverflow.com/questions/9379489/looping-through-the-elements-in-an-array-backwards
+                console.log(rConvo[i].author.username + ": \n" +rConvo[i].content)
+            }
+
+            // Start of Embed
+            throwbackChannel.send({
+                embed: {
+                    color: 3447003,
+                    author: {
+                        name: "Throwback to a conversation on " + rMessageTime + " in #" + rChannel,
+                        icon_url: rMessage.author.avatarURL
+                    },
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                    }
+                }
+            });            
+
+            // Formatting for throwback starts here
+            for (let i = rConvo.length - 1; i >= 0; i--) { //https://stackoverflow.com/questions/9379489/looping-through-the-elements-in-an-array-backwards
+                throwbackChannel.send(rConvo[i].author.username + " (" + moment(rConvo[i].createdTimestamp).format("MM/DD/YYYY h:mm a")  + ")" + ": \n" + rConvo[i].content + '\n' + '\n')
+            };
+
+            throwbackChannel.send({
+                embed: {
+                    color: 3447003,
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "End of Throwback"
+                    }
+                }
+            });
+
+
+        }).catch(err => (console.log(err)))
+
+
+
+
+
 
     }else if (arguments == "") {
         receivedMessage.channel.send("Give it like 30 seconds then check the `throwback` channel for the response").then(msg => msg.delete(10000))
@@ -302,8 +355,7 @@ function throwbackCommand(arguments, receivedMessage){
 
         
     } else {
-        
-        receivedMessage.channel.send({
+          receivedMessage.channel.send({
             embed: {
                 color: 3447003,
                 author: {
@@ -316,6 +368,7 @@ function throwbackCommand(arguments, receivedMessage){
                     !throwback
                     !throwback me
                     !throwback vid
+                    !throwback convo
                     *For more info use !throwback help`).trim()
                 }],
             }
