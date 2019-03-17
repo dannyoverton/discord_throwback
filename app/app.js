@@ -148,7 +148,7 @@ function throwbackCommand(arguments, receivedMessage){
     if (arguments == "help" ) {
         receivedMessage.channel.send({
             embed: {
-                color: 3447003,
+                color: 14177041,
                 author: {
                     name: "How to use the Throwback bot:",
                     icon_url: client.user.avatarURL, 
@@ -183,32 +183,36 @@ function throwbackCommand(arguments, receivedMessage){
             let rChannel = rMessage.channel.name;
             let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
 
-            // Formatting for throwback starts here
-            throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------\n"
-                + rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
-
-
             // Start of Embed
             throwbackChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 14177041,
                     author: {
                         name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
                         icon_url: rMessage.author.avatarURL
                     },
-
-                    //title: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
-
-                    //title: rUser + " sent this: " + rMessageTime + " in (" + rChannel + ")",
-                    //description: rContent,
                     timestamp: moment(),
                     footer: {
                         
                         text: "This throwback was requested by " + receivedMessage.author.username + " at "
                     }
                 }
-            });
+            });            
 
+            // Formatting for throwback starts here
+            throwbackChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+            // Endding embed
+            throwbackChannel.send({
+                embed: {
+                    color: 14177041,
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "End of Throwback"
+                    }
+                }
+            });
 
         }).catch(err => (console.log(err)))
                    
@@ -225,28 +229,33 @@ function throwbackCommand(arguments, receivedMessage){
             let rChannel = rMessage.channel.name;
             let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
 
-            // Formatting for throwback starts here
-            throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------\n"
-                + rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
-
-
             // Start of Embed
             throwbackChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 14177041,
                     author: {
                         name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
                         icon_url: rMessage.author.avatarURL
                     },
-
-                    //title: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
-
-                    //title: rUser + " sent this: " + rMessageTime + " in (" + rChannel + ")",
-                    //description: rContent,
                     timestamp: moment(),
                     footer: {
                         
                         text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                    }
+                }
+            });            
+
+            // Formatting for throwback starts here
+            throwbackChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+            // Endding embed
+            throwbackChannel.send({
+                embed: {
+                    color: 14177041,
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "End of Throwback"
                     }
                 }
             });
@@ -269,14 +278,14 @@ function throwbackCommand(arguments, receivedMessage){
             let rConvo = sum_messages.slice(rIndex - 3, rIndex + 3)
             console.log(rIndex)
             console.log(rConvo.length)
-            for (let i = rConvo.length - 1; i >= 0; i--) { //https://stackoverflow.com/questions/9379489/looping-through-the-elements-in-an-array-backwards
-                console.log(rConvo[i].author.username + ": \n" +rConvo[i].content)
-            }
+            // for (let i = rConvo.length - 1; i >= 0; i--) { //https://stackoverflow.com/questions/9379489/looping-through-the-elements-in-an-array-backwards
+            //     console.log(rConvo[i].author.username + ": \n" +rConvo[i].content)
+            // }
 
             // Start of Embed
             throwbackChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 14177041,
                     author: {
                         name: "Throwback to a conversation on " + rMessageTime + " in #" + rChannel,
                         icon_url: rMessage.author.avatarURL
@@ -296,7 +305,7 @@ function throwbackCommand(arguments, receivedMessage){
 
             throwbackChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 14177041,
                     timestamp: moment(),
                     footer: {
                         
@@ -325,14 +334,10 @@ function throwbackCommand(arguments, receivedMessage){
             let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
             
 
-            // Formatting for throwback starts here
-            throwbackChannel.send("-------------------------THROWBACK BELOW-------------------------\n"
-                + rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
-
             // Start of Embed
             throwbackChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 14177041,
                     author: {
                         name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
                         icon_url: rMessage.author.avatarURL
@@ -343,8 +348,22 @@ function throwbackCommand(arguments, receivedMessage){
                         text: "This throwback was requested by " + receivedMessage.author.username + " at "
                     }
                 }
-            });
+            });            
 
+            // Formatting for throwback starts here
+            throwbackChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+            // Endding embed
+            throwbackChannel.send({
+                embed: {
+                    color: 14177041,
+                    timestamp: moment(),
+                    footer: {
+                        
+                        text: "End of Throwback"
+                    }
+                }
+            });
 
         }).catch(err => (console.log(err)))
         
@@ -357,7 +376,7 @@ function throwbackCommand(arguments, receivedMessage){
     } else {
           receivedMessage.channel.send({
             embed: {
-                color: 3447003,
+                color: 14177041,
                 author: {
                     name: "Throwback Boot",
                     icon_url: client.user.avatarURL, 
