@@ -401,6 +401,55 @@ function throwbackCommand(arguments, receivedMessage) {
 
 
 
+    } else if (arguments == "start") {
+        receivedMessage.channel.send("One throwback post will be posted to the #throwback channel every 24 hours at this exact time or until I crash.").then(msg => msg.delete(10000))
+        var interval = setInterval(() => {
+            lots_of_messages_getter().then(msgs => {
+                sum_messages = msgs;
+                sum_messages = sum_messages.filter(msg => msg.content.startsWith('https://www.youtube.com/watch'));
+                let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
+                let rUser = rMessage.author.username;
+                let rContent = rMessage.content;
+                let rEmbed = (rMessage.attachments.length >= 0) ? rMessage.attachments.first().url : false
+                let rChannel = rMessage.channel.name;
+                let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
+
+                // Start of Embed
+                throwbackChannel.send({
+                    embed: {
+                        color: 14177041,
+                        author: {
+                            name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+                            icon_url: rMessage.author.avatarURL
+                        },
+                        timestamp: moment(),
+                        footer: {
+
+                            text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                        }
+                    }
+                });
+
+                // Formatting for throwback starts here
+                throwbackChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+                // Endding embed
+                throwbackChannel.send({
+                    embed: {
+                        color: 14177041,
+                        timestamp: moment(),
+                        footer: {
+
+                            text: "End of Throwback"
+                        }
+                    }
+                });
+            }).catch(err => (console.log(err)))
+
+
+        }, 24 * 3600000)
+
+
     } else {
         receivedMessage.channel.send({
             embed: {
