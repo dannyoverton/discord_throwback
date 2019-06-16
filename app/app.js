@@ -138,6 +138,7 @@ function cleanCommand(arguments, receivedMessage) {
 function throwbackCommand(arguments, receivedMessage) {
     var id = receivedMessage.member.id; // Code for getting ID of person who activates
     var throwbackChannel = client.channels.get("555605025917894657")
+    var generalChannel = client.channels.get("164580034269413376")
 
     if (receivedMessage.author.id === id) {
         receivedMessage.delete(10000)
@@ -415,7 +416,7 @@ function throwbackCommand(arguments, receivedMessage) {
                 let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
 
                 // Start of Embed
-                throwbackChannel.send({
+                generalChannel.send({
                     embed: {
                         color: 14177041,
                         author: {
@@ -431,10 +432,10 @@ function throwbackCommand(arguments, receivedMessage) {
                 });
 
                 // Formatting for throwback starts here
-                throwbackChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+                generalChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
 
                 // Endding embed
-                throwbackChannel.send({
+                generalChannel.send({
                     embed: {
                         color: 14177041,
                         timestamp: moment(),
