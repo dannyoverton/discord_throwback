@@ -7,7 +7,58 @@ const moment = require('moment') // Using moment.js to get current time for time
 require('dotenv').config();
 discord_bot_auth = process.env.BOT_SECRET_TOKEN
 
+client.on("ready", function () {
+    var generalChannel = client.channels.get("164580034269413376")
+    generalChannel.channel.send("One throwback post will be posted to the #throwback channel every 24 hours at this exact time or until I crash.").then(msg => msg.delete(10000))
+    var interval = setInterval(() => {                              //setInterval then the function you want on the interval followed by the interval time in ms
+        lots_of_messages_getter().then(msgs => {
+            sum_messages = msgs;
+            sum_messages = sum_messages.filter(msg => msg.content.startsWith('https://www.youtube.com/watch'));
+            let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
+            let rUser = rMessage.author.username;
+            let rContent = rMessage.content;
+            let rEmbed = (rMessage.attachments.length >= 0) ? rMessage.attachments.first().url : false
+            let rChannel = rMessage.channel.name;
+            let rMessageTime = new Date(rMessage.createdTimestamp).toDateString();
 
+            // Start of Embed
+            generalChannel.send({
+                embed: {
+                    color: 14177041,
+                    author: {
+                        name: "Throwback to when " + rUser + " sent this on " + rMessageTime + " in (" + rChannel + ")",
+                        icon_url: rMessage.author.avatarURL
+                    },
+                    timestamp: moment(),
+                    footer: {
+
+                        text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                    }
+                }
+            });
+
+            // Formatting for throwback starts here
+            generalChannel.send(rUser + ": \n" + ((rEmbed.length >= 0) ? rEmbed : rContent))
+
+            // Endding embed
+            generalChannel.send({
+                embed: {
+                    color: 14177041,
+                    timestamp: moment(),
+                    footer: {
+
+                        text: "End of Throwback"
+                    }
+                }
+            });
+        }).catch(err => (console.log(err)))
+
+
+    }, 12 * 3600000)
+
+
+}
+});
 
 client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user) { // Prevent bot from responding to its own messages
@@ -404,7 +455,7 @@ function throwbackCommand(arguments, receivedMessage) {
 
     } else if (arguments == "start") {
         receivedMessage.channel.send("One throwback post will be posted to the #throwback channel every 24 hours at this exact time or until I crash.").then(msg => msg.delete(10000))
-        var interval = setInterval(() => {
+        var interval = setInterval(() => {                              //setInterval then the function you want on the interval followed by the interval time in ms
             lots_of_messages_getter().then(msgs => {
                 sum_messages = msgs;
                 sum_messages = sum_messages.filter(msg => msg.content.startsWith('https://www.youtube.com/watch'));
@@ -448,7 +499,7 @@ function throwbackCommand(arguments, receivedMessage) {
             }).catch(err => (console.log(err)))
 
 
-        }, 24 * 3600000)
+        }, 12 * 3600000)
 
 
     } else {
