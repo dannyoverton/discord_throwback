@@ -9,7 +9,7 @@ discord_bot_auth = process.env.BOT_SECRET_TOKEN
 
 client.on("ready", function () {
     var generalChannel = client.channels.get("164580034269413376")
-    generalChannel.channel.send("One throwback post will be posted to the #throwback channel every 24 hours at this exact time or until I crash.").then(msg => msg.delete(10000))
+    generalChannel.send("One throwback post will be posted to the #throwback channel every 24 hours at this exact time or until I crash.").then(msg => msg.delete(10000))
     var interval = setInterval(() => {                              //setInterval then the function you want on the interval followed by the interval time in ms
         lots_of_messages_getter().then(msgs => {
             sum_messages = msgs;
