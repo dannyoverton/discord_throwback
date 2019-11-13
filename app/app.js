@@ -58,7 +58,7 @@ client.on("ready", function () {
 
 
 }
-});
+);
 
 client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user) { // Prevent bot from responding to its own messages
