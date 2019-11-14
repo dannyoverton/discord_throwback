@@ -89,7 +89,7 @@ function autothrowback() {
         }).catch(err => (console.log(err)))
 
 
-    }, 3600000) //12 * 3600000
+    }, 12 * 3600000) //12 * 3600000
 };
 
 client.on('message', (receivedMessage) => {
