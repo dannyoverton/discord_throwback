@@ -7,11 +7,46 @@ const moment = require('moment') // Using moment.js to get current time for time
 require('dotenv').config();
 discord_bot_auth = process.env.BOT_SECRET_TOKEN
 
-client.on("ready", function () {
+client.on('ready', () => {
+    autothrowback();
+})
+
+function autothrowback() {
+    console.log('Bot Connected and running.')
     var generalChannel = client.channels.get("164580034269413376")
+
+    async function lots_of_messages_getter(limit = 1000) {                              // Create async function
+        sum_messages = [];                                                              // Create sum_messages as empty array
+        let last_id;                                                                    // Create var to hold id of last message of array
+
+        
+        while (true) {                                                                  // Start loop, with True boolean loop will continue until we add a break
+            const options = {                                                           // Creating an options object
+                limit: 100
+            };                                                                          // End object creation
+            if (last_id) {                                                              // Create first condition
+                options.before = last_id;                                               // Here we say if last_id exists, append its value to options object
+            }
+
+            const messages = await generalChannel.fetchMessages(options);      // Set up fetching the messages, pass it the options object which holds our arguments
+            sum_messages.push(...messages.array());                                     // Here we use a "Spread Operator" for an array literal and push the messages array to sum_messages
+            last_id = messages.last().id;                                               // Thanks to hoisting (I think) we can assign last_id here and use it in the previous if statement
+
+            if (messages.size != 100 || sum_messages >= limit) {                        // This is our break function stating if our original array is less that 100 it will exit to prevent errors    
+                break;                                                                  // and if sum_messages reaches our limit it will end, otherwise it will loop until it reaches an end and break
+            }
+        }
+
+
+
+        return sum_messages;                                                            // Here we return sum_messages, allowing us to use the data in other functions
+    }
+
     generalChannel.send("One throwback post will be posted to the #throwback channel every 24 hours at this exact time or until I crash.").then(msg => msg.delete(10000))
     var interval = setInterval(() => {                              //setInterval then the function you want on the interval followed by the interval time in ms
+        console.log('Interval Working')
         lots_of_messages_getter().then(msgs => {
+            console.log('Message Getter Working')
             sum_messages = msgs;
             sum_messages = sum_messages.filter(msg => msg.content.startsWith('https://www.youtube.com/watch'));
             let rMessage = sum_messages[Math.floor(Math.random() * sum_messages.length)]
@@ -32,7 +67,7 @@ client.on("ready", function () {
                     timestamp: moment(),
                     footer: {
 
-                        text: "This throwback was requested by " + receivedMessage.author.username + " at "
+                        text: "This throwback was requested by " + 'your mom' + " at "
                     }
                 }
             });
@@ -54,11 +89,8 @@ client.on("ready", function () {
         }).catch(err => (console.log(err)))
 
 
-    }, 12 * 3600000)
-
-
-}
-);
+    }, 3600000) //12 * 3600000
+};
 
 client.on('message', (receivedMessage) => {
     if (receivedMessage.author == client.user) { // Prevent bot from responding to its own messages
@@ -499,7 +531,7 @@ function throwbackCommand(arguments, receivedMessage) {
             }).catch(err => (console.log(err)))
 
 
-        }, 12 * 3600000)
+        }, 12 * 3600000 ) //
 
 
     } else {
